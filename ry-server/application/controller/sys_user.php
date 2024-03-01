@@ -115,12 +115,12 @@ class Sys_user extends Controller
 		$loginTime = date('Y-m-d H:i:s',time());
 		if($jsonData ){
 			if(ENABLE_IMAGE_VERIFY_CODE){
-				if (!isset($jsonData->code)){
-					printAjaxError('code', '验证码不能为空');
-				}
+			if (!isset($jsonData->code)){
+			printAjaxError('code', '验证码不能为空');
+			}
 				if(!VerifyCode::check($jsonData->code)){
-					printAjaxError('code', '错误的验证码');
-				}
+			printAjaxError('code', '错误的验证码');
+			}
 			}
 		    if (!isset($jsonData->username) || !$jsonData->username) {
 				$this->_write_login_log("",'用户名不能为空',FAILURE,$loginTime);
@@ -457,6 +457,7 @@ class Sys_user extends Controller
 			foreach($list as $key=>$value){
 				$list[$key]['admin'] = _is_admin($value['userId']);
 				$list[$key]['userId'] = intval($value['userId']);
+				$list[$key]['dept'] = $this->Sys_dept_model->get2(array('dept_id'=>$value['deptId']));
 				unset($list[$key]['password']);
 			}
 		}

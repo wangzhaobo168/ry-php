@@ -73,8 +73,9 @@ class Application
                 $fields[$tmpArray[0]] = $tmpArray[1];
             }
         }
-        $obj = (object)$fields;
-        return $obj;
+        // $obj = (object)$fields;
+        // return $obj;
+        return $fields;
     }
 
     /**
@@ -125,6 +126,38 @@ class Application
         return $orgUrl;
     }
     /**
+     * 过滤参数
+     * @param string $str 接受的参数
+     * @return string
+     */
+    private function filterWords($str)
+    {
+        $farr = array(
+                "/<(\\/?)(script|i?frame|style|html|body|title|link|meta|object|\\?|\\%)([^>]*?)>/isU",
+                "/(<[^>]*)on[a-zA-Z]+\s*=([^>]*>)/isU",
+                "/select|insert|update|delete|\'|\/\*|\*|\.\.\/|\.\/|union|into|load_file|outfile|dump/is"
+        );
+        $str = preg_replace($farr,'',$str);
+        return $str;
+    }
+    
+    /**
+     * 过滤接受的参数或者数组,如$_GET,$_POST
+     * @param array|string $arr 接受的参数或者数组
+     * @return array|string
+     */
+    private function filterArr($arr)
+    {
+        if(is_array($arr)){
+            foreach($arr as $k => $v){
+                $arr[$k] = $this->filterWords($v);
+            }
+        }else{
+            $arr = $this->filterWords($arr);
+        }
+        return $arr;
+    }    
+    /**
      * Get and split the URL
      */
     private function splitUrl()
@@ -149,10 +182,10 @@ class Application
             unset($url[0], $url[1]);
             
             // Rebase array keys and store the URL params
-            $this->url_params = array_values($url);
+            $this->url_params = $this->filterArr(array_values($url));
 
             if(isset($uriArray[1])){
-                $this->url_ext_params = $this->splitParams($uriArray[1]);
+                $this->url_ext_params = $this->filterArr($this->splitParams($uriArray[1]));
             }
         }
     }
