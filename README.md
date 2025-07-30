@@ -126,7 +126,7 @@ server {
 
 ### 测试账号
 
-admin/adin123
+admin/123456
 
 #### 基本架构
 
